@@ -29,7 +29,6 @@ public class TesteInserirAluguel {
         aluguel.setLocacao(locacao);
         aluguel.setDataVencimento(LocalDate.now().plusMonths(1));
         aluguel.setDataPagamento(LocalDate.now().plusMonths(2));
-        aluguel.setValorPago(new BigDecimal("1500.00"));
         aluguel.setObs("Pago com atraso");
 
         aluguelRepository.salvaOuAtualiza(aluguel);

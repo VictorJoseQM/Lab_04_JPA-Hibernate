@@ -1,14 +1,13 @@
 package Imobiliaria.testes.aluguel;
 
-import Imobiliaria.entity.Aluguel;
 import Imobiliaria.repository.AluguelRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.List;
+import java.math.BigDecimal;
 
-public class TesteListarAlugueisPorCliente {
+public class TesteListarImoveisPorLimitePreco {
 
     public static void main(String[] args) {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
@@ -16,12 +15,9 @@ public class TesteListarAlugueisPorCliente {
 
         AluguelRepository repository = new AluguelRepository(manager);
 
-        // Levando em consideração que operações anteriores já foram feitas, para o cliente abaixo.
-        List<Aluguel> alugueis = repository.listarAlugueisPorCliente("João da Silva");
-
-        for (Aluguel aluguel : alugueis) {
-            System.out.println(aluguel);
-        }
+        BigDecimal limitePreco = new BigDecimal("1400.00");
+        System.out.println("Imóveis com valor de aluguel sugerido até " + limitePreco + ":");
+        repository.listarImoveisPorLimitePreco(limitePreco);
 
         manager.close();
         factory.close();

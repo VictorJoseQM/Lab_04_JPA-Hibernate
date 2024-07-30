@@ -26,6 +26,7 @@ public class TesteInserirImovel {
 
         Cliente cliente = clienteRepo.porId(1);  // Assumindo que há um cliente com ID 1
         TipoImovel tipoImovel = tipoImovelRepo.porId(1);  // Assumindo que há um tipo de imóvel com ID 1
+        Cliente cliente2 = clienteRepo.porId(2); //Assimindo que há um cliente com ID 2
 
         Imovel imovel = new Imovel();
         imovel.setCliente(cliente);
@@ -41,7 +42,22 @@ public class TesteInserirImovel {
         imovel.setValorAluguelSugerido(new BigDecimal("1500.00"));
         imovel.setObs("Imóvel recém reformado.");
 
+        Imovel imovel2 = new Imovel();
+        imovel2.setCliente(cliente);
+        imovel2.setTipoImovel(tipoImovel);
+        imovel2.setLogradouro("Rua do Sol");
+        imovel2.setBairro("Alemanha");
+        imovel2.setCep("12345-678");
+        imovel2.setMetragem(120);
+        imovel2.setDormitorios((byte) 3);
+        imovel2.setBanheiros((byte) 2);
+        imovel2.setSuites((byte) 1);
+        imovel2.setVagasGaragem((byte) 2);
+        imovel2.setValorAluguelSugerido(new BigDecimal("1300.00"));
+        imovel2.setObs("Imóvel para listar por preço");
+
         imovelRepo.salvaOuAtualiza(imovel);
+        imovelRepo.salvaOuAtualiza(imovel2);
 
         manager.getTransaction().commit();
 

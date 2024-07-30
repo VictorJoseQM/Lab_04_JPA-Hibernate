@@ -8,7 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.List;
 
-public class TesteListarAlugueisPorCliente {
+public class TesteListarAlugueisPagosComAtraso {
 
     public static void main(String[] args) {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
@@ -16,12 +16,8 @@ public class TesteListarAlugueisPorCliente {
 
         AluguelRepository repository = new AluguelRepository(manager);
 
-        // Levando em consideração que operações anteriores já foram feitas, para o cliente abaixo.
-        List<Aluguel> alugueis = repository.listarAlugueisPorCliente("João da Silva");
-
-        for (Aluguel aluguel : alugueis) {
-            System.out.println(aluguel);
-        }
+        System.out.println("Aluguéis pagos com atraso:");
+        repository.listarAlugueisPagosComAtraso();
 
         manager.close();
         factory.close();

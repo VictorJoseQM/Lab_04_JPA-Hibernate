@@ -26,8 +26,8 @@ public class TesteInserirLocacao {
         manager.getTransaction().begin();
 
         // Buscar um cliente e um imóvel existentes
-        Cliente cliente = clienteRepository.porId(1); // Substitua pelo ID real
-        Imovel imovel = imovelRepository.porId(1); // Substitua pelo ID real
+        Cliente cliente = clienteRepository.porId(1); // Supondo que exista um cliente com ID 1
+        Imovel imovel = imovelRepository.porId(1); // Supondo que exista um imovel com ID 1
 
         if (cliente == null || imovel == null) {
             System.out.println("Cliente ou imóvel não encontrado.");
