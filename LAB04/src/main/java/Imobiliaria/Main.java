@@ -1,26 +1,17 @@
 package Imobiliaria;
 
-import Imobiliaria.entity.Cliente;
-import Imobiliaria.entity.Imovel;
-import Imobiliaria.entity.Locacao;
-import Imobiliaria.entity.Profissional;
-import Imobiliaria.entity.ServicoImovel;
-import Imobiliaria.entity.TipoImovel;
-import Imobiliaria.repository.ClienteRepository;
-import Imobiliaria.repository.ImovelRepository;
-import Imobiliaria.repository.LocacaoRepository;
-import Imobiliaria.repository.ProfissionalRepository;
-import Imobiliaria.repository.TipoImovelRepository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import Imobiliaria.entity.*;
+import Imobiliaria.repository.*;
+import Imobiliaria.service.PagamentoAluguelService;
 
-public class Main {
+public class Main {                                 // Classe para criação e população do banco de dados.
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+
 
         // Cria a EntityManagerFactory
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("lab_jpa");
@@ -38,6 +29,8 @@ public class Main {
             ClienteRepository clienteRepository = new ClienteRepository(em);
             TipoImovelRepository tipoImovelRepository = new TipoImovelRepository(em);
             LocacaoRepository locacaoRepository = new LocacaoRepository(em);
+            ServicoImovelRepository servicoImovelRepository = new ServicoImovelRepository(em);
+            AluguelRepository aluguelRepository = new AluguelRepository(em);
 
             // Cria instâncias de Profissional
             Profissional profissional1 = new Profissional();
@@ -87,31 +80,10 @@ public class Main {
             imovel1.setBanheiros((byte) 2);
             imovel1.setSuites((byte) 1);
             imovel1.setVagasGaragem((byte) 2);
-            imovel1.setValorAluguelSugerido(new BigDecimal("2000.00"));
+            imovel1.setValorAluguelSugerido(new BigDecimal("1000.00"));
             imovel1.setObs("Imóvel bem localizado.");
             imovel1.setCliente(cliente); // Define o cliente para o imóvel
             imovel1.setTipoImovel(tipoImovel); // Define o tipo de imóvel
-
-            // Cria instância de ServicoImovel e associa a Profissional e Imovel
-            ServicoImovel servico1 = new ServicoImovel();
-            servico1.setProfissional(profissional1);
-            servico1.setImovel(imovel1);
-            servico1.setDataServico(LocalDate.now());
-            servico1.setValorTotal(new BigDecimal("500.00"));
-            servico1.setObs("Serviço de pintura");
-
-            ServicoImovel servico2 = new ServicoImovel();
-            servico2.setProfissional(profissional2);
-            servico2.setImovel(imovel1);
-            servico2.setDataServico(LocalDate.now().plusDays(1));
-            servico2.setValorTotal(new BigDecimal("700.00"));
-            servico2.setObs("Serviço de arquitetura");
-
-            // Adiciona os serviços ao Profissional e ao Imovel
-            profissional1.addServico(servico1);
-            profissional2.addServico(servico2);
-            imovel1.addServico(servico1);
-            imovel1.addServico(servico2);
 
             // Persiste Imovel no banco de dados
             imovelRepository.salvaOuAtualiza(imovel1);
@@ -128,40 +100,61 @@ public class Main {
             locacao1.setDiaVencimento((byte) 5);
             locacao1.setDataInicio(LocalDate.now());
             locacao1.setDataFim(LocalDate.now().plusYears(1));
-            locacao1.setAtivo(true);
+            locacao1.setAtivo(false);
             locacao1.setObs("Primeira locação do imóvel.");
 
-            Locacao locacao2 = new Locacao();
-            locacao2.setImovel(imovel1);
-            locacao2.setCliente(cliente);
-            locacao2.setValorAluguel(new BigDecimal("2500.00"));
-            locacao2.setPercentualMulta(new BigDecimal("2.00"));
-            locacao2.setDiaVencimento((byte) 5);
-            locacao2.setDataInicio(LocalDate.now());
-            locacao2.setDataFim(LocalDate.now().plusYears(2));
-            locacao2.setAtivo(true);
-            locacao2.setObs("Segunda locação do imóvel.");
-
             // Tenta persistir a Locacao no banco de dados
-            try {
-                locacaoRepository.salvaOuAtualiza(locacao1);
-                locacaoRepository.salvaOuAtualiza(locacao2);
-                System.out.println("Locação registrada com sucesso!");
-            } catch (IllegalArgumentException e) {
-                System.out.println("Erro ao registrar locação: " + e.getMessage());
-            }
+            locacaoRepository.salvaOuAtualiza(locacao1);
+
+            // Cria instância de ServicoImovel e associa a Profissional e Imovel
+            ServicoImovel servico1 = new ServicoImovel();
+            servico1.setProfissional(profissional1);
+            servico1.setImovel(imovel1);
+            servico1.setDataServico(LocalDate.now());
+            servico1.setValorTotal(new BigDecimal("500.00"));
+            servico1.setObs("Serviço de pintura");
+
+            ServicoImovel servico2 = new ServicoImovel();
+            servico2.setProfissional(profissional2);
+            servico2.setImovel(imovel1);
+            servico2.setDataServico(LocalDate.now().plusDays(1));
+            servico2.setValorTotal(new BigDecimal("700.00"));
+            servico2.setObs("Serviço de arquitetura");
+
+            // Persiste os serviços no banco de dados
+            servicoImovelRepository.salvaOuAtualiza(servico1);
+            servicoImovelRepository.salvaOuAtualiza(servico2);
+
+            // Cria instância de Aluguel e associa a Locacao
+            Aluguel aluguel1 = new Aluguel();
+            aluguel1.setLocacao(locacao1);
+            aluguel1.setDataVencimento(LocalDate.now().plusMonths(1));
+            aluguel1.setValorPago(new BigDecimal("2500.00"));
+            aluguel1.setDataPagamento(LocalDate.now().plusMonths(1).plusDays(5));
+            aluguel1.setObs("Aluguel pago com atraso.");
+
+            Aluguel aluguel2 = new Aluguel();
+            aluguel2.setLocacao(locacao1);
+            aluguel2.setDataVencimento(LocalDate.now().plusMonths(2));
+            aluguel2.setValorPago(new BigDecimal("2500.00"));
+            aluguel2.setDataPagamento(LocalDate.now().plusMonths(2).plusDays(3));
+            aluguel2.setObs("Aluguel pago com atraso.");
+
+            Aluguel aluguel3 = new Aluguel();
+            aluguel3.setLocacao(locacao1);
+            aluguel3.setDataVencimento(LocalDate.now().plusMonths(3));
+            aluguel3.setValorPago(new BigDecimal("2500.00"));
+            aluguel3.setDataPagamento(LocalDate.now().plusMonths(3));
+            aluguel3.setObs("Aluguel pago em dia.");
+
+            // Persiste os aluguéis no banco de dados
+            aluguelRepository.salvaOuAtualiza(aluguel1);
+            aluguelRepository.salvaOuAtualiza(aluguel2);
+            aluguelRepository.salvaOuAtualiza(aluguel3);
 
             // Finaliza a transação
             em.getTransaction().commit();
-
-            // Lista todos os profissionais cadastrados
-            profissionalRepository.listarProfissionais();
-
-            // Lista todos os imóveis cadastrados
-            imovelRepository.listarImoveis();
-
-            // Lista todas as locações do cliente
-            locacaoRepository.listarLocacoesPorCliente(cliente.getId());
+            System.out.println("\nBanco lab_jpa criado e populado!");
 
         } catch (Exception e) {
             // Em caso de erro, desfaz a transação
@@ -174,5 +167,7 @@ public class Main {
             em.close();
             factory.close();
         }
+
+
     }
 }

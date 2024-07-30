@@ -1,6 +1,5 @@
 package Imobiliaria.entity;
 
-
 import javax.persistence.*;
 import lombok.*;
 
@@ -29,4 +28,16 @@ public class ServicoImovel implements EntidadeBase {
     private BigDecimal valorTotal;
 
     private String obs;
+
+    @Override
+    public String toString() {
+        return "ServicoImovel{" +
+                "id=" + id +
+                ", profissional=" + profissional.getNome() + " (" + profissional.getProfissao() + ")" +
+                ", imovel=" + imovel.getLogradouro() + ", " + imovel.getBairro() +
+                ", dataServico=" + dataServico +
+                ", valorTotal=" + valorTotal +
+                ", obs='" + obs + '\'' +
+                '}';
+    }
 }

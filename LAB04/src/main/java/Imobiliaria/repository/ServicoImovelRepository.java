@@ -20,19 +20,23 @@ public class ServicoImovelRepository {
         return dao.salvaOuAtualiza(servicoImovel);
     }
 
-    public ServicoImovel buscaPorId(Integer id) {
+    public ServicoImovel porId(Integer id) {
         return dao.buscaPorId(ServicoImovel.class, id);
     }
 
-    public void remove(ServicoImovel servicoImovel) {
-        dao.remove(servicoImovel);
-    }
-
-    public List<ServicoImovel> listarServicosPorLocacao(Integer locacaoId) {
-        TypedQuery<ServicoImovel> query = em.createQuery(
-                "SELECT s FROM Locacao, ServicoImovel s " +
-                        "WHERE Locacao.imovel.id = ServicoImovel.imovel.id ", ServicoImovel.class);
-        query.setParameter("", locacaoId);
+    public List<ServicoImovel> todos() {
+        TypedQuery<ServicoImovel> query = em.createQuery("SELECT s FROM ServicoImovel s", ServicoImovel.class);
         return query.getResultList();
     }
+
+    public void listarServicosPorLocacao(Integer locacaoId) {
+        TypedQuery<ServicoImovel> query = em.createQuery(
+                "SELECT s FROM ServicoImovel s WHERE s.imovel.id = :locacaoId", ServicoImovel.class);
+        query.setParameter("locacaoId", locacaoId);
+        List<ServicoImovel> result = query.getResultList();
+        for (ServicoImovel servicoImovel : result) {
+            System.out.println(servicoImovel);
+        }
+    }
 }
+

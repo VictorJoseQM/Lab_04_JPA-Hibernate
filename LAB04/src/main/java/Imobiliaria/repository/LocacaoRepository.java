@@ -17,11 +17,15 @@ public class LocacaoRepository {
     }
 
     public Locacao salvaOuAtualiza(Locacao locacao) {
-        if (isImovelDisponivel(locacao.getImovel().getId())) {
-            return dao.salvaOuAtualiza(locacao);
+        if (locacao.getId() == null) {
+            if (isImovelDisponivel(locacao.getImovel().getId())) {
+                return dao.salvaOuAtualiza(locacao);
+            } else {
+                System.out.println("Imóvel não está disponível para locação.");
+                throw new IllegalArgumentException("Imóvel não está disponível para locação.");
+            }
         } else {
-            System.out.println("Imóvel não está disponível para locação.");
-            throw new IllegalArgumentException("Imóvel não está disponível para locação.");
+            return dao.salvaOuAtualiza(locacao);
         }
     }
 
